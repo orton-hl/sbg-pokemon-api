@@ -1,10 +1,10 @@
 name: Java Spring Boot CI/CD Pipeline
 
-on:
-  merge:
-    branches:
-      - main  # Trigger on push to the 'main' branch
-
+on: pull_request
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
 jobs:
   build:
     runs-on: ubuntu-latest
