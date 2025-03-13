@@ -1,0 +1,27 @@
+name: Java Spring Boot CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Login to server
+        run:  |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa "${{ secrets.H_USER }}"@"${{ secrets.H_HOST }}" 'bash -l -c "cd /sbg-pokemon-api/ && \
+            git pull && \
+            docker build -t pokemon-api-sbg . && \
+            docker stop pokemon-api-sbg || true && \
+            docker kill pokemon-api-sbg || true && \
+            docker rm pokemon-api-sbg || true && \
+            docker run -p 8005:8080 -d --name pokemon-api-sbg -t pokemon-api-sbg && \
+            docker ps --filter \"name=pokemon-api-sbg\""'
