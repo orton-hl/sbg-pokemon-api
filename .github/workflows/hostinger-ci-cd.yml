@@ -11,36 +11,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'
-          distribution: 'adoptopenjdk'
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan your-server-ip >> ~/.ssh/known_hosts
 
-      - name: Build with Maven
-        run: mvn clean install --no-transfer-progress
-
-      - name: Run tests
-        run: mvn test
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    if: success()  # Only deploy if the build and tests succeed
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up SSH key for deployment
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-
-      - name: Deploy to Hostinger
-        run: ssh -o StrictHostKeyChecking=no '${{H_SSH}}' "cd /sbg-pokemon-api && git pull && ./mvnw clean install && java -jar target/your-app.jar"
-        env:
-          HOSTINGER_HOST: ${{ secrets.H_HOST }}
-          HOSTINGER_USER: ${{ secrets.H_USER }}
+      - name: Login to server
+        run: |
+            ssh -o StrictHostKeyChecking=no user@your-server-ip "echo 'Logged in successfully!'"
