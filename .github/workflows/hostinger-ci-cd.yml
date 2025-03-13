@@ -12,9 +12,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ll
+          ls
           
       - name: Login to server
         run:  |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa  "${{ secrets.H_USER }}"@"${{ secrets.H_HOST }}"
-          ll
+          ls
