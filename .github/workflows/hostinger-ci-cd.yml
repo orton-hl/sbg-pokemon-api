@@ -15,5 +15,5 @@ jobs:
           
       - name: Login to server
         run:  |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa  "${{ secrets.H_USER }}"@$"${{ secrets.H_HOST }}"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa  "${{ secrets.H_USER }}"@"${{ secrets.H_HOST }}"
           ll
