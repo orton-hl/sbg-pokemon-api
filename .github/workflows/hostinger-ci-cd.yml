@@ -40,8 +40,7 @@ jobs:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
 
       - name: Deploy to Hostinger
-        run: |
-          ssh -o StrictHostKeyChecking=no '${{H_SSH}}' "cd /sbg-pokemon-api && git pull && ./mvnw clean install && java -jar target/your-app.jar"
+        run: ssh -o StrictHostKeyChecking=no '${{H_SSH}}' "cd /sbg-pokemon-api && git pull && ./mvnw clean install && java -jar target/your-app.jar"
         env:
           HOSTINGER_HOST: ${{ secrets.H_HOST }}
           HOSTINGER_USER: ${{ secrets.H_USER }}
