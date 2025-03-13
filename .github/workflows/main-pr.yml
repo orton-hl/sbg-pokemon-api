@@ -23,7 +23,7 @@ jobs:
           distribution: 'adoptopenjdk'
 
       - name: Build and test with Maven
-        run: mvn clean install -DskipTests=false
+        run: ./mvnw  clean install -DskipTests=false
 
       - name: Run tests
-        run: mvn test
+        run: ./mvnw  test
