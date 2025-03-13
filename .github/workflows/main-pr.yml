@@ -13,25 +13,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # Step 1: Checkout the code from the repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
+      # Step 2: Set up Java 17 environment
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '17'
-          distribution: 'adoptopenjdk'
+          java-version: '17'  # Use Java 17
+          distribution: 'adoptopenjdk'  # Or use 'zulu', 'openjdk', etc.
 
+      # Step 3: Cache Maven dependencies to speed up builds (optional but recommended)
       - name: Cache Maven dependencies
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/*.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build with Maven
-        run: mvn clean install -DskipTests
+      # Step 4: Build and test the application using Maven
+      - name: Build and test with Maven
+        run: mvn clean install -DskipTests=false
 
-      - name: Run tests with Maven
+      # Step 5: Run the tests with Maven (optional if you didn't run the tests in the previous step)
+      - name: Run tests
         run: mvn test
