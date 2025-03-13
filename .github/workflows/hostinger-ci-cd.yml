@@ -1,0 +1,47 @@
+name: Java Spring Boot CI/CD Pipeline
+
+on:
+  merge:
+    branches:
+      - main  # Trigger on push to the 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adoptopenjdk'
+
+      - name: Build with Maven
+        run: mvn clean install --no-transfer-progress
+
+      - name: Run tests
+        run: mvn test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: success()  # Only deploy if the build and tests succeed
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH key for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Hostinger
+        run: |
+          ssh -o StrictHostKeyChecking=no '${{H_SSH}}' "cd /sbg-pokemon-api && git pull && ./mvnw clean install && java -jar target/your-app.jar"
+        env:
+          HOSTINGER_HOST: ${{ secrets.H_HOST }}
+          HOSTINGER_USER: ${{ secrets.H_USER }}
