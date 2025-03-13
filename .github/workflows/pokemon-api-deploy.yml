@@ -1,4 +1,4 @@
-name: Java Spring Boot CI/CD Pipeline
+name: BUILD
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           
-      - name: Login to server
+      - name: Deploy
         run:  |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa "${{ secrets.H_USER }}"@"${{ secrets.H_HOST }}" 'bash -l -c "cd /sbg-pokemon-api/ && \
             git pull && \
