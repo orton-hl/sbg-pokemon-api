@@ -18,5 +18,4 @@ jobs:
           ssh-keyscan 185.97.144.205 >> ~/.ssh/known_hosts
 
       - name: Login to server
-        run: |
-            ssh -o StrictHostKeyChecking=no root@185.97.144.205 "echo 'Logged in successfully!'"
+        run:  ssh root@185.97.144.205
