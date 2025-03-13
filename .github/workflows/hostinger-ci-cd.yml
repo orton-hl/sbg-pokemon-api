@@ -7,15 +7,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan 185.97.144.205 >> ~/.ssh/known_hosts
-
+          
       - name: Login to server
-        run:  ssh root@185.97.144.205
+        run:  |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa  $S_USER@$S_HOST
+          ll
