@@ -7,19 +7,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ls
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           
       - name: Login to server
         run:  |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa  "${{ secrets.H_USER }}"@"${{ secrets.H_HOST }}"
           ls
+
+      - name: Pull code
+        run:  |
           cd /sbg-pokemon-api/
           git pull
+
+      - name: Docker Run
+        run:  |
           docker build  -t pokemon-api-sbg .
           docker stop pokemon-api-sbg
           docker kill pokemon-api-sbg
