@@ -21,7 +21,7 @@ jobs:
               docker kill pokemon-api-sbg && \
               docker rm pokemon-api-sbg && \
               docker run -p 8005:8080 -d --name pokemon-api-sbg -t pokemon-api-sbg && \
-              docker ps --filter \"name=pokemon-api-sbg\""
+              docker ps --filter \"name=pokemon-api-sbg\"'
 
 
 #      - name: Pull code
