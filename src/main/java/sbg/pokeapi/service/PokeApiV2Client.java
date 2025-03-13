@@ -105,7 +105,7 @@ public class PokeApiV2Client {
     }
 
     public static List<Pokemon.StatEntry> extractStats(DocumentContext docCTX) {
-        return docCTX.read(JSON_PATH_STAT_LIST, List.class).stream()
+        List list = docCTX.read(JSON_PATH_STAT_LIST, List.class).stream()
                 .map(e -> {
                     DocumentContext entry = JsonPath.parse(e);
                     return Pokemon.StatEntry.builder()
@@ -115,6 +115,8 @@ public class PokeApiV2Client {
                             .build();
                 })
                 .toList();
+
+        return list;
     }
 
     public static Pokemon.PhysicalAttributes extractPhysicalAttributes(DocumentContext docCTX) {
