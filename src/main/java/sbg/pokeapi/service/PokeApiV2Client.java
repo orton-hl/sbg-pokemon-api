@@ -2,6 +2,9 @@ package sbg.pokeapi.service;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -9,7 +12,9 @@ import org.springframework.web.client.RestClient;
 import sbg.pokeapi.dto.GetAllResponse;
 import sbg.pokeapi.model.Pokemon;
 import sbg.pokeapi.model.PokemonEntry;
+import sbg.pokeapi.repo.PokemonCacheRepo;
 
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +41,29 @@ public class PokeApiV2Client {
     private static final String JSON_PATH_POKEMON_NAME = "$.name";
     private static final String JSON_PATH_POKEMON_ID = "$.id";
 
-    RestClient restClient = RestClient.create("https://pokeapi.co");
+
+    @Value("${app.pokemon.baseurl}")
+    private URI  baseURL;
+
+    @Value("${app.pokemon.urlPath.byName}")
+    String baseURLByName;
+
+    @Value("${app.pokemon.urlPath.byId}")
+    String baseURLById;
+
+
+    @Value("${app.pokemon.urlPath}")
+    String urlPath;
+
+    RestClient restClient;
+
+    @Autowired()
+    private PokemonCacheRepo pokemonCacheRepo;
+
+    @PostConstruct()
+    private void  init(){
+        restClient = RestClient.create(baseURL);
+    }
 
     public Optional<GetAllResponse> getAll() {
         return this.getAll(1, 10);
@@ -44,7 +71,7 @@ public class PokeApiV2Client {
 
     public Optional<GetAllResponse> getAll(@NonNull() Integer pageNo,@NonNull()  Integer  pageSize) {
         String response = restClient.get().uri(uri -> uri.
-                        path("/api/v2/pokemon")
+                        path(urlPath)
                         .queryParam("limit", pageSize)
                         .queryParam("offset", pageSize * (pageNo - 1))
                         .build())
@@ -78,12 +105,12 @@ public class PokeApiV2Client {
     }
 
     public Optional<Pokemon> getPokemonDetails(@NonNull String name) {
-        String url = String.format("/api/v2/pokemon/%s", name);
+        String url = String.format(baseURLByName, name);
         return extractPokemon(url);
     }
 
     public Optional<Pokemon> getPokemonDetailsById(@NonNull Integer id) {
-        String url = String.format("api/v2/pokemon/%s/", id);
+        String url = String.format(baseURLById, id);
         return extractPokemon(url);
     }
 
