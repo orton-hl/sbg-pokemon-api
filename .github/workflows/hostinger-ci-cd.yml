@@ -18,3 +18,18 @@ jobs:
         run:  |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa  "${{ secrets.H_USER }}"@"${{ secrets.H_HOST }}"
           ls
+
+      - name: Pull code
+        run:  |
+          cd /sbg-pokemon-api/
+          git pull
+
+      - name: Docker Run
+        run:  |
+          docker build  -t pokemon-api-sbg .
+          docker stop pokemon-api-sbg
+          docker kill pokemon-api-sbg
+          docker rm pokemon-api-sbg
+          docker run -p 8005:8080   -d --name  pokemon-api-sbg -t pokemon-api-sbg
+          
+          docker ps --filter "name=pokemon-api-sbg"
