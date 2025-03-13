@@ -1,30 +1,34 @@
 package sbg.pokeapi.controller;
 
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import sbg.pokeapi.dto.GetAllResponse;
 import sbg.pokeapi.model.Pokemon;
-import sbg.pokeapi.model.PokemonEntry;
 import sbg.pokeapi.service.PokeApiV2Client;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController()
+@CrossOrigin(origins = "*")
 @RequestMapping("/pokedex")
 public class PokeDexController {
 
     @Autowired
     PokeApiV2Client pokeClient;
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAll() {
-        Optional<List<PokemonEntry>> pokemon = pokeClient.getAll();
-
-        return ResponseEntity.ok(pokeClient.getAll());
+    @GetMapping("")
+    public ResponseEntity<?> getAll(@Nullable @RequestParam("pageNo") Integer pageNo,@Nullable @RequestParam("pageSize") Integer pageSize) {
+        Optional<GetAllResponse> response;
+        if(Objects.isNull(pageNo) || Objects.isNull(pageSize)) {
+            response = pokeClient.getAll();
+        }
+        else {
+            response = pokeClient.getAll(pageNo, pageSize);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{name}")

@@ -13,6 +13,7 @@ public class Pokemon {
     private String description;
     private List<StatEntry> stats;
     private PhysicalAttributes physicalAttributes;
+    private List<Abilities> abilities;
 
     @Data
     @Builder
@@ -29,5 +30,14 @@ public class Pokemon {
         private Integer baseStat;
         private Integer effort;
         private String name;
+    }
+
+    @Data
+    @Builder
+    public static class Abilities {
+        private String name;
+        private String url;
+        private Integer slot;
+        private Boolean isHidden;
     }
 }
